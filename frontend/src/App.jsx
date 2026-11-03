@@ -4,6 +4,8 @@ import { Link, Route, Routes, useNavigate } from 'react-router-dom';
 import LandingPage from './features/discovery/LandingPage.jsx';
 import LoginPage from './features/auth/LoginPage.jsx';
 import RegisterPage from './features/auth/RegisterPage.jsx';
+import BlogListPage from './features/posts/BlogListPage.jsx';
+import BlogReadPage from './features/posts/BlogReadPage.jsx';
 import { getSession, clearSession } from './features/auth/session.js';
 import { ProtectedRoute } from './shared/ProtectedRoute.jsx';
 import { Navbar } from './shared/Navbar.jsx';
@@ -75,7 +77,9 @@ export default function App() {
           element={<RegisterPage session={session} onAuthenticated={setSession} />}
         />
         <Route element={<ProtectedRoute session={session} />}>
-          {['/blogs', '/blog/:id', '/write', '/edit/:id'].map((path) => (
+          <Route path="/blogs" element={<BlogListPage session={session} />} />
+          <Route path="/blog/:id" element={<BlogReadPage session={session} />} />
+          {['/write', '/edit/:id'].map((path) => (
             <Route key={path} path={path} element={<NotFound />} />
           ))}
         </Route>
