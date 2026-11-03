@@ -173,6 +173,24 @@ test("navbar Write and create Cancel do not publish a draft", async ({
   ).toEqual([]);
 });
 
+/** Enter a bulk value through the native textarea setter and input event.
+ * Chromium automation insertText stalls on this multiline payload even in a blank
+ * textarea. Keep the exact payload and all persistence/count assertions; smaller
+ * fills and sequential typing above still exercise native keyboard automation.
+ */
+async function fillBulkContent(locator, value) {
+  await expect(locator).toBeVisible();
+  await expect(locator).toBeEditable();
+  await locator.focus();
+  await locator.evaluate((element, text) => {
+    const setter = Object.getOwnPropertyDescriptor(
+      HTMLTextAreaElement.prototype, "value",
+    ).set;
+    setter.call(element, text);
+    element.dispatchEvent(new Event("input", { bubbles: true }));
+  }, value);
+}
+
 for (const viewport of [
   { width: 1280, height: 800 },
   { width: 390, height: 844 },
@@ -223,7 +241,7 @@ for (const viewport of [
       await content.fill("");
       await expect(counter).toHaveText("0 characters");
       const large = "  Literal 😀 <b>words</b>\n\n".repeat(3000) + "  End  ";
-      await content.fill(large);
+      await fillBulkContent(content, large);
       await expect(content).toHaveValue(large);
       await expect(counter).toHaveText(large.length + " characters");
       await page.getByRole("button", { name: "Save", exact: true }).click();
@@ -244,7 +262,7 @@ for (const viewport of [
       await content.fill("");
       await expect(counter).toHaveText("0 characters");
       const revised = "  Edited 😀\n\n" + large;
-      await content.fill(revised);
+      await fillBulkContent(content, revised);
       await expect(counter).toHaveText(revised.length + " characters");
       await content.pressSequentially("!");
       await expect(counter).toHaveText(revised.length + 1 + " characters");
