@@ -1,4 +1,4 @@
-/** Exercise public discovery through links; intended later routes currently show not-found. */
+/** Exercise public discovery and guest entry through actual navigation links. */
 import { test, expect } from './fixtures.js';
 
 test('guest discovers the local demo and navigates its entry links', async ({ page }, testInfo) => {
@@ -22,18 +22,18 @@ test('guest discovers the local demo and navigates its entry links', async ({ pa
   await expect(nav.getByRole('link', { name: 'Get Started' })).toHaveAttribute('href', '/register');
   await page.getByRole('link', { name: 'Start Reading' }).click();
   await expect(page).toHaveURL(/\/login$/);
-  await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
-  await page.getByRole('link', { name: 'Back to Home' }).click();
+  await expect(page.getByLabel('Username', { exact: true })).toBeVisible();
+  await page.getByRole('link', { name: 'WriteSpace', exact: true }).first().click();
   await page.getByRole('link', { name: 'Get Started Free' }).first().click();
   await expect(page).toHaveURL(/\/register$/);
-  await page.getByRole('link', { name: 'Back to Home' }).click();
+  await page.getByRole('link', { name: 'WriteSpace', exact: true }).first().click();
   const footer = page.getByRole('navigation', { name: 'Footer navigation' });
   await expect(footer.getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
   await expect(footer.getByRole('link', { name: 'Login' })).toHaveAttribute('href', '/login');
   await expect(footer.getByRole('link', { name: 'Register' })).toHaveAttribute('href', '/register');
   await footer.getByRole('link', { name: 'All Blogs' }).click();
-  await expect(page).toHaveURL(/\/blogs$/);
-  await page.getByRole('link', { name: 'Back to Home' }).click();
+  await expect(page).toHaveURL(/\/login$/);
+  await page.getByRole('link', { name: 'WriteSpace', exact: true }).first().click();
   await expect(page.getByRole('heading', { name: 'Latest from the Blog' })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });
@@ -55,9 +55,9 @@ test('previews real stored writing newest first and retains it across navigation
   await expect(latest.getByText(posts[1].content.slice(0, 120) + '…')).toBeVisible();
   await expect(latest.getByRole('link', { name: /Local thought 4/ })).toHaveAttribute('href', '/blog/post-4');
   await latest.getByRole('link', { name: /Local thought 4/ }).click();
-  await expect(page).toHaveURL(/\/blog\/post-4$/);
-  await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
-  await page.getByRole('link', { name: 'Back to Home' }).click();
+  await expect(page).toHaveURL(/\/login$/);
+  await expect(page.getByLabel('Username', { exact: true })).toBeVisible();
+  await page.getByRole('link', { name: 'WriteSpace', exact: true }).first().click();
   await page.reload();
   await expect(latest.getByRole('heading', { level: 3 })).toHaveText(['Local thought 4', 'Local thought 3', 'Local thought 2']);
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem('writespace_posts')))).toEqual(posts);
