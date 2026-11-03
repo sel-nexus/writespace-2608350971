@@ -58,28 +58,28 @@ export default function RegisterPage({ session = null, onAuthenticated }) {
     >
       <section
         aria-labelledby="auth-title"
-        className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-lg sm:p-8"
+        className="w-full max-w-md rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-lg sm:p-8"
       >
         <Link
           to="/"
-          className={`inline-flex rounded-lg text-lg font-bold text-indigo-700 ${focusRing}`}
+          className={`inline-flex rounded-lg text-lg font-bold text-indigo-700 dark:text-indigo-300 ${focusRing}`}
         >
           WriteSpace
         </Link>
-        <p className="mt-6 text-xs font-semibold uppercase tracking-widest text-slate-500">
+        <p className="mt-6 text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">
           Your browser. Your space.
         </p>
-        <h1 id="auth-title" className="mt-2 font-serif text-3xl font-bold text-slate-900">
+        <h1 id="auth-title" className="mt-2 font-serif text-3xl font-bold text-slate-900 dark:text-slate-100">
           Create your account
         </h1>
-        <p className="mt-3 leading-relaxed text-slate-600">
+        <p className="mt-3 leading-relaxed text-slate-600 dark:text-slate-300">
           Join the local writing demo. All fields are required.
         </p>
-        <p className="mt-5 rounded-lg bg-slate-50 p-3 text-sm leading-relaxed text-slate-600">
+        <p className="mt-5 rounded-lg bg-slate-50 dark:bg-slate-800 p-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
           Local-only demo: passwords are stored in plaintext in this browser. Never use real
           passwords or sensitive data. This is not secure authentication.
         </p>
-        <p className="mt-3 text-sm text-slate-600">
+        <p className="mt-3 text-sm text-slate-600 dark:text-slate-300">
           Built-in demo credentials: username <strong>admin</strong> / password{' '}
           <strong>admin</strong>.
         </p>
@@ -129,7 +129,7 @@ export default function RegisterPage({ session = null, onAuthenticated }) {
             onChange={(event) => setValues({ ...values, confirmPassword: event.target.value })}
           />
           {message && (
-            <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
+            <p role="alert" className="rounded-lg bg-red-50 dark:bg-red-950 p-3 text-sm text-red-600 dark:text-red-300">
               {message}
             </p>
           )}
@@ -141,11 +141,11 @@ export default function RegisterPage({ session = null, onAuthenticated }) {
             {submitting ? 'Saving…' : 'Register'}
           </button>
         </form>
-        <p className="mt-6 text-center text-sm text-slate-600">
+        <p className="mt-6 text-center text-sm text-slate-600 dark:text-slate-300">
           Already have an account?{' '}
           <Link
             to="/login"
-            className={`rounded font-semibold text-indigo-700 underline underline-offset-4 ${focusRing}`}
+            className={`rounded font-semibold text-indigo-700 dark:text-indigo-300 underline underline-offset-4 ${focusRing}`}
           >
             Login
           </Link>
