@@ -123,7 +123,7 @@ test("list/read/back preserves local writing, literal text, ownership and reload
   ).toHaveCount(0);
   await expect(page.locator("article time")).toHaveText("Mar 04, 2026");
   await page.reload();
-  expect(await content.textContent()).toBe(posts[1].content);
+  await expect.poll(() => content.textContent()).toBe(posts[1].content);
   expect(
     await page.evaluate(() =>
       JSON.parse(localStorage.getItem("writespace_posts")),
@@ -141,6 +141,99 @@ test("list/read/back preserves local writing, literal text, ownership and reload
   await expect(page.getByRole("button", { name: "Delete" })).toBeVisible();
   await page.getByRole("link", { name: "Back to All Posts" }).click();
   await expect(grid.getByRole("heading")).toHaveCount(3);
+});
+
+test("owner card Edit prefills writing, Cancel retains it and Save persists the matching reader", async ({
+  page,
+}) => {
+  await seedReading(page);
+  await page.goto("/blogs");
+  const grid = page.getByRole("region", { name: "Blog posts" });
+  const original = posts[0];
+  const content = page.locator("article .whitespace-pre-wrap");
+  await grid
+    .getByRole("link", { name: "Edit " + original.title, exact: true })
+    .click();
+  await expect(page).toHaveURL(/\/edit\/older$/);
+  await expect(page.getByLabel("Title")).toHaveValue(original.title);
+  await expect(page.getByLabel("Content")).toHaveValue(original.content);
+  await page.getByLabel("Title").fill("Discarded card revision");
+  await page.getByLabel("Content").fill("Discarded content\n\nNot saved");
+  await page.getByRole("link", { name: "Cancel", exact: true }).click();
+  await expect(page).toHaveURL(/\/blog\/older$/);
+  await expect(
+    page.getByRole("heading", { name: original.title, exact: true }),
+  ).toBeVisible();
+  await expect.poll(() => content.textContent()).toBe(original.content);
+  expect(
+    await page.evaluate(() =>
+      JSON.parse(localStorage.getItem("writespace_posts")),
+    ),
+  ).toEqual(posts);
+
+  await page.getByRole("link", { name: "Back to All Posts" }).click();
+  await grid
+    .getByRole("link", { name: "Edit " + original.title, exact: true })
+    .click();
+  await expect(page).toHaveURL(/\/edit\/older$/);
+  await expect(page.getByLabel("Title")).toHaveValue(original.title);
+  await expect(page.getByLabel("Content")).toHaveValue(original.content);
+  const updated = {
+    ...original,
+    title: "Owner card revision",
+    content: original.content + "\n\nSaved from the card\nFinal line",
+  };
+  await page.getByLabel("Title").fill(updated.title);
+  await page.getByLabel("Content").fill(updated.content);
+  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await expect(page).toHaveURL(/\/blog\/older$/);
+  await expect(
+    page.getByRole("heading", { name: updated.title, exact: true }),
+  ).toBeVisible();
+  await expect.poll(() => content.textContent()).toBe(updated.content);
+  expect(
+    await page.evaluate(() =>
+      JSON.parse(localStorage.getItem("writespace_posts")),
+    ),
+  ).toEqual([updated, ...posts.slice(1)]);
+});
+
+test("Admin card Edit prefills another author's writing and Save preserves authorship in the reader", async ({
+  page,
+}) => {
+  await seedReading(page, admin);
+  await page.goto("/blogs");
+  const original = posts[2];
+  await page
+    .getByRole("region", { name: "Blog posts" })
+    .getByRole("link", { name: "Edit " + original.title, exact: true })
+    .click();
+  await expect(page).toHaveURL(/\/edit\/middle$/);
+  await expect(page.getByLabel("Title")).toHaveValue(original.title);
+  await expect(page.getByLabel("Content")).toHaveValue(original.content);
+  const updated = {
+    ...original,
+    title: "Admin card revision",
+    content: original.content + "\n\nAdmin revision\nFinal line",
+  };
+  await page.getByLabel("Title").fill(updated.title);
+  await page.getByLabel("Content").fill(updated.content);
+  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await expect(page).toHaveURL(/\/blog\/middle$/);
+  await expect(
+    page.getByRole("heading", { name: updated.title, exact: true }),
+  ).toBeVisible();
+  await expect
+    .poll(() => page.locator("article .whitespace-pre-wrap").textContent())
+    .toBe(updated.content);
+  await expect(
+    page.getByRole("article").getByText(original.authorName, { exact: true }),
+  ).toBeVisible();
+  expect(
+    await page.evaluate(() =>
+      JSON.parse(localStorage.getItem("writespace_posts")),
+    ),
+  ).toEqual([...posts.slice(0, 2), updated]);
 });
 
 test("Admin sees every card Edit and can edit another author in the reader", async ({

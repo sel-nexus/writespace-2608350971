@@ -2,11 +2,17 @@
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, useLocation } from 'react-router-dom';
 import LandingPage from './LandingPage.jsx';
 import App from '../../App.jsx';
 import { PublicNavbar } from '../../shared/PublicNavbar.jsx';
-import { savePosts } from '../posts/storage.js';
+import { savePosts, saveUsers } from '../posts/storage.js';
+import { BUILTIN_ADMIN, setSession, SESSION_KEY } from '../auth/session.js';
+
+/** Expose test history so redirects are checked against actual App routes. */
+function RouteLocation() {
+  return <output aria-label="Current route">{useLocation().pathname}</output>;
+}
 
 /** Render discovery inside test-only history.
  * Args:
@@ -149,7 +155,7 @@ describe('public discovery', () => {
     expect(toggle).toHaveAttribute('aria-expanded', 'false');
   });
 
-  it('routes only landing and a useful fallback and returns home through a real link', async () => {
+  it('keeps unknown-route recovery and opens the real login form from Start Reading', async () => {
     const user = userEvent.setup();
     render(
       <MemoryRouter initialEntries={['/not-a-page']}>
@@ -160,7 +166,72 @@ describe('public discovery', () => {
     await user.click(screen.getByRole('link', { name: 'Back to Home' }));
     expect(screen.getByRole('heading', { level: 1, name: 'WriteSpace' })).toBeVisible();
     await user.click(screen.getByRole('link', { name: 'Start Reading' }));
-    expect(screen.getByRole('heading', { name: 'Page not found' })).toBeVisible();
-    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Welcome back' })).toBeVisible();
+    expect(screen.getByRole('textbox', { name: 'Username' })).toBeVisible();
+    expect(screen.getByLabelText('Password', { exact: true })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Login', exact: true })).toBeVisible();
+    expect(screen.queryByRole('heading', { name: 'Page not found' })).not.toBeInTheDocument();
+  });
+
+  it.each([
+    ['admin', '/admin', 'Admin', 'Admin avatar', 'Admin Dashboard'],
+    ['user', '/blogs', 'Mira', 'Contributor avatar', 'All Blogs'],
+  ])('uses the landing header and role-home routes in actual App for %s', async (role, home, name, avatar, heading) => {
+    const user = userEvent.setup();
+    saveUsers([{
+      id: 'u1', username: 'mira', displayName: 'Mira', password: 'demo',
+      role: 'user', createdAt: '2026-03-04T12:00:00.000Z',
+    }]);
+    const identity = role === 'admin' ? BUILTIN_ADMIN : {
+      userId: 'u1', username: 'mira', displayName: 'Mira', role: 'user',
+    };
+    setSession(identity);
+    render(
+      <MemoryRouter>
+        <App />
+        <RouteLocation />
+      </MemoryRouter>,
+    );
+    const nav = within(screen.getByRole('navigation', { name: 'Public navigation' }));
+    expect(screen.getAllByRole('banner')).toHaveLength(1);
+    expect(screen.queryByRole('navigation', { name: 'Authenticated navigation' })).not.toBeInTheDocument();
+    expect(nav.getByText(name)).toBeVisible();
+    expect(nav.getByRole('img', { name: avatar })).toBeVisible();
+    expect(nav.getByRole('link', { name: 'Go to Dashboard' })).toHaveAttribute('href', home);
+    expect(nav.queryByRole('link', { name: 'Login' })).not.toBeInTheDocument();
+    expect(nav.queryByRole('link', { name: 'Get Started' })).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Start Reading' })).toHaveAttribute('href', '/blogs');
+    await user.click(nav.getByRole('link', { name: 'Go to Dashboard' }));
+    expect(screen.getByLabelText('Current route')).toHaveTextContent(home);
+    expect(screen.getByRole('heading', { level: 1, name: heading })).toBeVisible();
+
+    for (const link of ['Login', 'Register']) {
+      const authenticatedNav = within(screen.getByRole('navigation', { name: 'Authenticated navigation' }));
+      expect(authenticatedNav.getByRole('button', { name: name + ' account' })).toBeVisible();
+      expect(authenticatedNav.getByRole('link', { name: 'All Blogs' })).toHaveAttribute('href', '/blogs');
+      expect(authenticatedNav.getByRole('link', { name: 'Write' })).toHaveAttribute('href', '/write');
+      if (role === 'admin') {
+        expect(authenticatedNav.getByRole('link', { name: 'Users' })).toHaveAttribute('href', '/users');
+      } else {
+        expect(authenticatedNav.queryByRole('link', { name: 'Users' })).not.toBeInTheDocument();
+      }
+      expect(screen.queryByRole('navigation', { name: 'Public navigation' })).not.toBeInTheDocument();
+      await user.click(authenticatedNav.getByRole('link', { name: 'WriteSpace' }));
+      expect(screen.getByLabelText('Current route')).toHaveTextContent(/^\/$/);
+      const footer = within(screen.getByRole('navigation', { name: 'Footer navigation' }));
+      expect(footer.getByRole('link', { name: link })).toHaveAttribute('href', '/' + link.toLowerCase());
+      await user.click(footer.getByRole('link', { name: link }));
+      expect(screen.getByLabelText('Current route')).toHaveTextContent(home);
+      expect(screen.getByRole('heading', { level: 1, name: heading })).toBeVisible();
+      expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+    }
+
+    await user.click(screen.getByRole('button', { name: name + ' account' }));
+    await user.click(screen.getByRole('button', { name: 'Logout' }));
+    expect(localStorage.getItem(SESSION_KEY)).toBeNull();
+    expect(screen.getByLabelText('Current route')).toHaveTextContent(/^\/$/);
+    expect(screen.getByRole('heading', { level: 1, name: 'WriteSpace' })).toBeVisible();
+    expect(within(screen.getByRole('navigation', { name: 'Public navigation' })).getByRole('link', { name: 'Login' })).toBeVisible();
+    expect(screen.getAllByRole('banner')).toHaveLength(1);
   });
 });

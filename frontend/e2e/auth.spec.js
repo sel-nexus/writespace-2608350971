@@ -1,5 +1,66 @@
-/** Exercise browser-local auth journeys; downstream pages are asserted only by URL. */
+/** Exercise browser-local auth, landing navigation and role-home redirects through real UI. */
 import { test, expect } from './fixtures.js';
+
+for (const account of [
+  { role: 'admin', username: 'admin', password: 'admin', name: 'Admin', home: '/admin', heading: 'Admin Dashboard', avatar: 'Admin avatar' },
+  { role: 'user', username: 'mira', password: 'demo', name: 'Mira', home: '/blogs', heading: 'All Blogs', avatar: 'Contributor avatar' },
+]) {
+  test(account.role + ' logs in, returns to landing, opens dashboard and redirects footer auth links home', async ({ page }) => {
+    // Seed only a current local account; login must establish the session through UI.
+    if (account.role === 'user') {
+      await page.addInitScript(() => {
+        localStorage.setItem('writespace_users', JSON.stringify([{
+          id: 'u1', username: 'mira', displayName: 'Mira', password: 'demo',
+          role: 'user', createdAt: '2026-03-04T12:00:00.000Z',
+        }]));
+      });
+    }
+    await page.goto('/');
+    await page.getByRole('link', { name: 'Start Reading' }).click();
+    await expect(page.getByRole('heading', { name: 'Welcome back' })).toBeVisible();
+    await page.getByLabel('Username', { exact: true }).fill(account.username);
+    await page.getByLabel('Password', { exact: true }).fill(account.password);
+    await page.getByRole('button', { name: 'Login', exact: true }).click();
+    await expect(page).toHaveURL(new RegExp(account.home + '$'));
+    await expect(page.getByRole('heading', { level: 1, name: account.heading })).toBeVisible();
+    const identity = await page.evaluate(() => JSON.parse(localStorage.getItem('writespace_session')));
+    expect(identity).toEqual({
+      userId: account.role === 'admin' ? 'admin' : 'u1',
+      username: account.username, displayName: account.name, role: account.role,
+    });
+    await page.getByRole('navigation', { name: 'Authenticated navigation' }).getByRole('link', { name: 'WriteSpace' }).click();
+    await expect(page).toHaveURL(/\/$/);
+    await expect(page.getByRole('heading', { level: 1, name: 'WriteSpace' })).toBeVisible();
+    const publicNav = page.getByRole('navigation', { name: 'Public navigation' });
+    const toggle = publicNav.getByRole('button', { name: 'Open menu' });
+    if (await toggle.isVisible()) await toggle.click();
+    await expect(publicNav.getByText(account.name, { exact: true })).toBeVisible();
+    await expect(publicNav.getByRole('img', { name: account.avatar })).toBeVisible();
+    await expect(publicNav.getByRole('link', { name: 'Login', exact: true })).toHaveCount(0);
+    await expect(publicNav.getByRole('link', { name: 'Get Started', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('banner')).toHaveCount(1);
+    await expect(page.getByRole('navigation', { name: 'Authenticated navigation' })).toHaveCount(0);
+    await expect(publicNav.getByRole('link', { name: 'Go to Dashboard' })).toHaveAttribute('href', account.home);
+    await publicNav.getByRole('link', { name: 'Go to Dashboard' }).click();
+    await expect(page).toHaveURL(new RegExp(account.home + '$'));
+    await expect(page.getByRole('heading', { level: 1, name: account.heading })).toBeVisible();
+
+    for (const link of ['Login', 'Register']) {
+      await page.getByRole('navigation', { name: 'Authenticated navigation' }).getByRole('link', { name: 'WriteSpace' }).click();
+      await expect(page).toHaveURL(/\/$/);
+      await expect(page.getByRole('heading', { level: 1, name: 'WriteSpace' })).toBeVisible();
+      const footerLink = page.getByRole('navigation', { name: 'Footer navigation' }).getByRole('link', { name: link, exact: true });
+      await expect(footerLink).toHaveAttribute('href', '/' + link.toLowerCase());
+      await footerLink.click();
+      await expect(page).toHaveURL(new RegExp(account.home + '$'));
+      await expect(page.getByRole('heading', { level: 1, name: account.heading })).toBeVisible();
+      await expect(page.getByRole('button', { name: account.name + ' account' })).toBeVisible();
+      await expect(page.getByLabel('Username', { exact: true })).toHaveCount(0);
+      await expect(page.getByLabel('Password', { exact: true })).toHaveCount(0);
+      expect(await page.evaluate(() => JSON.parse(localStorage.getItem('writespace_session')))).toEqual(identity);
+    }
+  });
+}
 
 test('registration persists across reload, logout clears session, and returning login works', async ({
   page,

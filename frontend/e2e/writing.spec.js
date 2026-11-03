@@ -116,9 +116,9 @@ test("register -> write -> read -> edit -> read -> cancel/confirm delete -> list
     ),
   ).toEqual(updated);
   await page.reload();
-  expect(await page.locator("article .whitespace-pre-wrap").textContent()).toBe(
-    updated.content,
-  );
+  await expect
+    .poll(() => page.locator("article .whitespace-pre-wrap").textContent())
+    .toBe(updated.content);
   page.once("dialog", async (dialog) => {
     expect(dialog.type()).toBe("confirm");
     await dialog.dismiss();

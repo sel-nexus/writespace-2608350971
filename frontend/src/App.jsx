@@ -1,6 +1,6 @@
 /** Own persistent local identity and the complete role-aware local publication routes. */
 import { useEffect, useState } from "react";
-import { Link, Route, Routes, useNavigate } from "react-router-dom";
+import { Link, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import LandingPage from "./features/discovery/LandingPage.jsx";
 import LoginPage from "./features/auth/LoginPage.jsx";
 import RegisterPage from "./features/auth/RegisterPage.jsx";
@@ -12,6 +12,7 @@ import UsersPage from "./features/admin/UsersPage.jsx";
 import { getSession, clearSession } from "./features/auth/session.js";
 import { ProtectedRoute } from "./shared/ProtectedRoute.jsx";
 import { Navbar } from "./shared/Navbar.jsx";
+import { PublicNavbar } from "./shared/PublicNavbar.jsx";
 import { buttonVariants, focusRing } from "./shared/styles.js";
 
 /** Render a useful not-found state without pretending intended routes exist.
@@ -45,6 +46,7 @@ function NotFound() {
 export default function App() {
   const [session, setSession] = useState(getSession);
   const navigate = useNavigate();
+  const location = useLocation();
   useEffect(() => {
     /** Revalidate identity after another tab changes users or session storage. */
     function synchronize() {
@@ -74,7 +76,11 @@ export default function App() {
       >
         Skip to content
       </a>
-      <Navbar session={session} onLogout={logout} />
+      {location.pathname === "/" ? (
+        <PublicNavbar session={session} />
+      ) : (
+        <Navbar session={session} onLogout={logout} />
+      )}
       <Routes>
         <Route path="/" element={<LandingPage session={session} />} />
         <Route
