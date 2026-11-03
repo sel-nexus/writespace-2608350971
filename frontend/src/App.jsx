@@ -1,4 +1,4 @@
-/** Own persistent local identity and routes; feature destinations remain not-found until their slices. */
+/** Own persistent local identity and the complete role-aware local publication routes. */
 import { useEffect, useState } from "react";
 import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import LandingPage from "./features/discovery/LandingPage.jsx";
@@ -7,6 +7,8 @@ import RegisterPage from "./features/auth/RegisterPage.jsx";
 import BlogListPage from "./features/posts/BlogListPage.jsx";
 import BlogReadPage from "./features/posts/BlogReadPage.jsx";
 import PostFormPage from "./features/posts/PostFormPage.jsx";
+import AdminPage from "./features/admin/AdminPage.jsx";
+import UsersPage from "./features/admin/UsersPage.jsx";
 import { getSession, clearSession } from "./features/auth/session.js";
 import { ProtectedRoute } from "./shared/ProtectedRoute.jsx";
 import { Navbar } from "./shared/Navbar.jsx";
@@ -38,7 +40,7 @@ function NotFound() {
 
 /** Own session state, synchronize external storage changes and compose role-aware routes.
  * Returns:
- *   Discovery, auth, reading, writing, guarded admin fallbacks and unknown-route feedback.
+ *   Discovery, auth, reading, writing, guarded administration and unknown-route feedback.
  */
 export default function App() {
   const [session, setSession] = useState(getSession);
@@ -105,8 +107,8 @@ export default function App() {
           />
         </Route>
         <Route element={<ProtectedRoute session={session} roles={["admin"]} />}>
-          <Route path="/admin" element={<NotFound />} />
-          <Route path="/users" element={<NotFound />} />
+          <Route path="/admin" element={<AdminPage session={session} />} />
+          <Route path="/users" element={<UsersPage session={session} />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

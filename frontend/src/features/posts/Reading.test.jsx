@@ -416,9 +416,9 @@ describe("App reading guards and future destinations", () => {
         ).toBeVisible();
     },
   );
-  it.each(["/admin", "/users"])(
-    "preserves authorized future-route fallback %s",
-    (path) => {
+  it.each([["/admin", "Admin Dashboard"], ["/users", "Manage Users"]])(
+    "wires authorized admin destination %s to its actual heading",
+    (path, heading) => {
       setSession(BUILTIN_ADMIN);
       render(
         <MemoryRouter initialEntries={[path]}>
@@ -426,7 +426,7 @@ describe("App reading guards and future destinations", () => {
         </MemoryRouter>,
       );
       expect(
-        screen.getByRole("heading", { name: "Page not found" }),
+        screen.getByRole("heading", { name: heading }),
       ).toBeVisible();
     },
   );
