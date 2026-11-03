@@ -14,7 +14,9 @@ export function getAvatar(role) {
     <span
       role="img"
       aria-label={known ? `${role === 'admin' ? 'Admin' : 'Contributor'} avatar` : 'Guest avatar'}
-      className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-xl ${known ? roleColors[role] : 'bg-slate-200'}`}
+      className={
+        `inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-xl ${known ? roleColors[role] : 'bg-slate-200'}`
+      }
     >
       {known ? (role === 'admin' ? '👑' : '📖') : 'W'}
     </span>

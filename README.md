@@ -28,7 +28,14 @@ node node_modules/@playwright/test/cli.js install chromium
 npm run test:e2e
 ```
 
-`dist/` is the production bundle. Unit verification passed 531 tests. The independent test critic passed with score 1.00 in two rounds. Full desktop/mobile E2E specs are authored but the current sandbox's Playwright runner hangs before discovery, including `--list`. Bounded cache/config retries did not resolve it; the human approved publication with E2E explicitly unverified. Browser preflight itself ran successfully and captured accessibility, HTML, style and screenshots. Do not interpret authored specs as passing journeys.
+`dist/` is the production bundle. This change run passed 612 unit/component tests (baseline: 531) and the production Vite build. The independent test critic passed with score 1.00 and zero high failures in two rounds. Full desktop/mobile E2E specs are authored, but the sandbox's Playwright runner hangs before discovery, including `--list`. Full-suite, fresh-cache and guest-home-copy attempts timed out without output; the human approved publication with E2E explicitly unverified. Chromium preflight captured 20 light/dark desktop/mobile states with accessibility trees, HTML, computed styles and screenshots, with no browser errors or horizontal overflow. Preflight is not a substitute for passing full journeys.
+
+## Theme and authoring
+Use **Switch to dark mode** / **Switch to light mode** in public or signed-in navigation. The raw `writespace_theme` preference is independent of login and survives logout/reload. Missing, invalid or unreadable preference defaults to light; storage write failure does not prevent the visible switch. No operating-system theme synchronization is used.
+
+Content shows an immediate informational character count while typing, pasting or clearing. Editing begins with the saved content count. There is no maximum length and required-field validation is unchanged. Count follows JavaScript string length (UTF-16 code units); some emoji count as two units.
+
+Known dependency warning: the inherited pinned dependencies report 11 npm audit findings (2 moderate, 7 high, 2 critical). No unrelated breaking upgrades were applied; review dependency remediation separately.
 
 ## Features and routes
 - `/`: public discovery, three latest local post previews and session-aware navigation.

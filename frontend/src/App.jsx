@@ -32,10 +32,10 @@ function NotFound() {
       id="main-content"
       className="mx-auto min-h-[70dvh] max-w-6xl px-4 py-24 sm:px-6"
     >
-      <h1 className="font-serif text-4xl font-bold text-slate-900">
+      <h1 className="font-serif text-4xl font-bold text-slate-900 dark:text-slate-100">
         Page not found
       </h1>
-      <p className="mt-4 text-slate-600">
+      <p className="mt-4 text-slate-600 dark:text-slate-300">
         This address is not available. Return to WriteSpace to explore the local
         publication.
       </p>

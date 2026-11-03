@@ -16,14 +16,19 @@ function PreviewCard({ post, headingLevel = 'h3' }) {
   const Heading = headingLevel;
   if (!post) {
     return (
-      <article className="rounded-2xl border border-slate-200 dark:border-slate-700 border-t-4 border-t-teal-500 dark:border-t-teal-400 bg-white dark:bg-slate-900 p-6 shadow-sm">
+      <article
+        className="rounded-2xl border border-slate-200 dark:border-slate-700 border-t-4 border-t-teal-500 dark:border-t-teal-400 bg-white dark:bg-slate-900 p-6 shadow-sm"
+      >
         <Heading className="font-serif text-2xl font-bold text-slate-900 dark:text-slate-100">
           A space for your writing
         </Heading>
         <p className="mt-4 leading-relaxed text-slate-600 dark:text-slate-300">
           Your latest local post will appear here. Start with a thought, a story, or something worth remembering.
         </p>
-        <Link to="/register" className={`mt-6 inline-flex min-h-11 items-center rounded-lg font-semibold text-indigo-700 dark:text-indigo-300 ${focusRing}`}>
+        <Link
+          to="/register"
+          className={`mt-6 inline-flex min-h-11 items-center rounded-lg font-semibold text-indigo-700 dark:text-indigo-300 ${focusRing}`}
+        >
           Get Started Free
         </Link>
       </article>
@@ -33,7 +38,9 @@ function PreviewCard({ post, headingLevel = 'h3' }) {
     month: 'short', day: '2-digit', year: 'numeric', timeZone: 'UTC',
   }).format(new Date(post.createdAt));
   return (
-    <article className="h-full min-w-0 rounded-2xl border border-slate-200 dark:border-slate-700 border-t-4 border-t-teal-500 dark:border-t-teal-400 bg-white dark:bg-slate-900 shadow-sm">
+    <article
+      className="h-full min-w-0 rounded-2xl border border-slate-200 dark:border-slate-700 border-t-4 border-t-teal-500 dark:border-t-teal-400 bg-white dark:bg-slate-900 shadow-sm"
+    >
       <Link
         to={`/blog/${encodeURIComponent(post.id)}`}
         className={`block h-full rounded-2xl p-6 transition-shadow hover:shadow-md motion-reduce:transition-none ${focusRing}`}
@@ -90,7 +97,10 @@ export default function LandingPage({ session = null }) {
             <p className="text-sm font-semibold uppercase tracking-widest text-teal-800 dark:text-teal-300">
               A browser-local publication
             </p>
-            <h1 id="hero-title" className="mt-5 font-serif text-[clamp(3rem,7vw,5.5rem)] font-bold leading-[1.1] tracking-tight text-slate-900 dark:text-slate-100">
+            <h1
+              id="hero-title"
+              className="mt-5 font-serif text-[clamp(3rem,7vw,5.5rem)] font-bold leading-[1.1] tracking-tight text-slate-900 dark:text-slate-100"
+            >
               WriteSpace
             </h1>
             <p className="mt-6 max-w-md text-xl leading-relaxed text-slate-600 dark:text-slate-300 sm:text-2xl">
@@ -151,7 +161,9 @@ export default function LandingPage({ session = null }) {
               ))}
             </div>
           ) : (
-            <div className="mt-8 rounded-2xl border border-dashed border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 p-8">
+            <div
+              className="mt-8 rounded-2xl border border-dashed border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 p-8"
+            >
               <p className="text-lg font-medium text-slate-700 dark:text-slate-200">
                 No posts yet — check back soon!
               </p>
@@ -166,7 +178,11 @@ export default function LandingPage({ session = null }) {
         <div className="mx-auto max-w-6xl">
           <nav aria-label="Footer navigation" className="flex flex-wrap gap-6">
             {[['Home', '/'], ['All Blogs', '/blogs'], ['Login', '/login'], ['Register', '/register']].map(([label, path]) => (
-              <Link key={path} to={path} className={`inline-flex min-h-11 items-center rounded-lg hover:text-white dark:hover:text-white ${focusRing}`}>
+              <Link
+                key={path}
+                to={path}
+                className={`inline-flex min-h-11 items-center rounded-lg hover:text-white dark:hover:text-white ${focusRing}`}
+              >
                 {label}
               </Link>
             ))}

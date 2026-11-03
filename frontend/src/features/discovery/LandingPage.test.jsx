@@ -157,13 +157,20 @@ describe('public discovery', () => {
 
   it('keeps unknown-route recovery and opens the real login form from Start Reading', async () => {
     const user = userEvent.setup();
+    localStorage.setItem('writespace_theme', 'dark');
     render(
       <MemoryRouter initialEntries={['/not-a-page']}>
         <App />
       </MemoryRouter>,
     );
     expect(screen.getByRole('heading', { name: 'Page not found' })).toBeVisible();
-    await user.click(screen.getByRole('link', { name: 'Back to Home' }));
+    expect(document.documentElement).toHaveClass('dark');
+    expect(screen.getByRole('heading', { name: 'Page not found' })).toHaveClass('text-slate-900', 'dark:text-slate-100');
+    expect(screen.getByText(/This address is not available/)).toHaveClass('text-slate-600', 'dark:text-slate-300');
+    const recovery = screen.getByRole('link', { name: 'Back to Home' });
+    expect(recovery).toBeVisible();
+    expect(recovery).toHaveAttribute('href', '/');
+    await user.click(recovery);
     expect(screen.getByRole('heading', { level: 1, name: 'WriteSpace' })).toBeVisible();
     await user.click(screen.getByRole('link', { name: 'Start Reading' }));
     expect(screen.getByRole('heading', { name: 'Welcome back' })).toBeVisible();

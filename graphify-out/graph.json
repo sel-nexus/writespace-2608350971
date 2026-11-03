@@ -280,7 +280,7 @@
       "label": "identity",
       "file_type": "code",
       "source_file": "frontend/e2e/writing.spec.js",
-      "source_location": "L176",
+      "source_location": "L270",
       "_origin": "ast"
     },
     {
@@ -288,7 +288,7 @@
       "label": "otherPost",
       "file_type": "code",
       "source_file": "frontend/e2e/writing.spec.js",
-      "source_location": "L182",
+      "source_location": "L276",
       "_origin": "ast"
     },
     {
@@ -296,7 +296,7 @@
       "label": "seedOtherPost()",
       "file_type": "code",
       "source_file": "frontend/e2e/writing.spec.js",
-      "source_location": "L195",
+      "source_location": "L289",
       "_callable": true,
       "_origin": "ast"
     },
@@ -1741,7 +1741,7 @@
       "label": "PostFormPage()",
       "file_type": "code",
       "source_file": "frontend/src/features/posts/PostFormPage.jsx",
-      "source_location": "L27",
+      "source_location": "L29",
       "_callable": true,
       "_origin": "ast"
     },
@@ -1750,7 +1750,7 @@
       "label": "save()",
       "file_type": "code",
       "source_file": "frontend/src/features/posts/PostFormPage.jsx",
-      "source_location": "L49",
+      "source_location": "L51",
       "_callable": true,
       "_origin": "ast"
     },
@@ -3032,7 +3032,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "frontend/e2e/writing.spec.js",
-      "source_location": "L176",
+      "source_location": "L270",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -3042,7 +3042,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "frontend/e2e/writing.spec.js",
-      "source_location": "L182",
+      "source_location": "L276",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -3052,7 +3052,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "frontend/e2e/writing.spec.js",
-      "source_location": "L195",
+      "source_location": "L289",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -3085,7 +3085,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "frontend/e2e/writing.spec.js",
-      "source_location": "L223",
+      "source_location": "L317",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -7749,7 +7749,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/features/posts/PostFormPage.jsx",
-      "source_location": "L27",
+      "source_location": "L29",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -7759,7 +7759,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/features/posts/PostFormPage.jsx",
-      "source_location": "L49",
+      "source_location": "L51",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -7954,7 +7954,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/features/posts/PostFormPage.test.jsx",
-      "source_location": "L60",
+      "source_location": "L58",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -10808,7 +10808,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/features/posts/PostFormPage.jsx",
-      "source_location": "L31",
+      "source_location": "L33",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -10819,7 +10819,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/features/posts/PostFormPage.jsx",
-      "source_location": "L56",
+      "source_location": "L58",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -10830,7 +10830,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/features/posts/PostFormPage.jsx",
-      "source_location": "L57",
+      "source_location": "L59",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -10841,7 +10841,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/features/posts/PostFormPage.jsx",
-      "source_location": "L68",
+      "source_location": "L70",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -10852,7 +10852,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/features/posts/PostFormPage.jsx",
-      "source_location": "L69",
+      "source_location": "L71",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -11548,7 +11548,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "frontend/src/features/posts/PostFormPage.jsx",
-      "source_location": "L99",
+      "source_location": "L101",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -11560,7 +11560,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "frontend/src/features/posts/PostFormPage.jsx",
-      "source_location": "L56",
+      "source_location": "L58",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -11572,7 +11572,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "frontend/src/features/posts/PostFormPage.jsx",
-      "source_location": "L57",
+      "source_location": "L59",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -11734,7 +11734,7 @@
     }
   ],
   "metadata": {
-    "built_at": "2026-11-03T14:34:44.300342+00:00",
+    "built_at": "2026-11-03T14:38:36.821790+00:00",
     "version": "graph_update-v1",
     "codebase_root": "C:\\artifacts-v2\\T0132PcJVCRTV000403112614052964\\developer",
     "force": true,
