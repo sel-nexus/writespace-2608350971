@@ -1,6 +1,12 @@
 /** Own persistent local identity and the complete role-aware local publication routes. */
-import { useEffect, useState } from "react";
-import { Link, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useLayoutEffect, useState } from "react";
+import {
+  Link,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import LandingPage from "./features/discovery/LandingPage.jsx";
 import LoginPage from "./features/auth/LoginPage.jsx";
 import RegisterPage from "./features/auth/RegisterPage.jsx";
@@ -13,6 +19,7 @@ import { getSession, clearSession } from "./features/auth/session.js";
 import { ProtectedRoute } from "./shared/ProtectedRoute.jsx";
 import { Navbar } from "./shared/Navbar.jsx";
 import { PublicNavbar } from "./shared/PublicNavbar.jsx";
+import { getTheme, saveTheme } from "./shared/theme.js";
 import { buttonVariants, focusRing } from "./shared/styles.js";
 
 /** Render a useful not-found state without pretending intended routes exist.
@@ -45,6 +52,15 @@ function NotFound() {
  */
 export default function App() {
   const [session, setSession] = useState(getSession);
+  const [theme, setTheme] = useState(getTheme);
+  useLayoutEffect(() => {
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    saveTheme(theme);
+  }, [theme]);
+  /** Switch presentation independently of identity and route state. */
+  function toggleTheme() {
+    setTheme((current) => (current === "dark" ? "light" : "dark"));
+  }
   const navigate = useNavigate();
   const location = useLocation();
   useEffect(() => {
@@ -69,17 +85,26 @@ export default function App() {
     navigate("/", { replace: true });
   }
   return (
-    <div className="min-h-[100dvh] bg-slate-50 font-sans text-slate-800">
+    <div className="min-h-[100dvh] bg-slate-50 font-sans text-slate-800 dark:bg-slate-950 dark:text-slate-100">
       <a
         href="#main-content"
-        className={`sr-only rounded-lg bg-white p-3 focus:not-sr-only ${focusRing}`}
+        className={`sr-only rounded-lg bg-white p-3 dark:bg-slate-900 focus:not-sr-only ${focusRing}`}
       >
         Skip to content
       </a>
       {location.pathname === "/" ? (
-        <PublicNavbar session={session} />
+        <PublicNavbar
+          session={session}
+          theme={theme}
+          onToggleTheme={toggleTheme}
+        />
       ) : (
-        <Navbar session={session} onLogout={logout} />
+        <Navbar
+          session={session}
+          onLogout={logout}
+          theme={theme}
+          onToggleTheme={toggleTheme}
+        />
       )}
       <Routes>
         <Route path="/" element={<LandingPage session={session} />} />
