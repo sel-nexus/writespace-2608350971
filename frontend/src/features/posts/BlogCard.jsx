@@ -1,11 +1,16 @@
 /** Present a plain-text post preview with an ownership-aware edit destination. */
-import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
-import { Avatar } from '../../shared/Avatar.jsx';
-import { buttonVariants, focusRing } from '../../shared/styles.js';
-import { canManagePost, formatPostDate, getAuthorRole } from './postService.js';
+import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
+import { Avatar } from "../../shared/Avatar.jsx";
+import { buttonVariants, focusRing } from "../../shared/styles.js";
+import { canManagePost, formatPostDate, getAuthorRole } from "./postService.js";
 
-const accents = ['border-indigo-500', 'border-violet-500', 'border-pink-500', 'border-teal-500'];
+const accents = [
+  "border-indigo-500 dark:border-indigo-400",
+  "border-violet-500 dark:border-violet-400",
+  "border-pink-500 dark:border-pink-400",
+  "border-teal-500 dark:border-teal-400",
+];
 
 /** Render a navigable preview without nested links or interpreted HTML.
  * Args:
@@ -20,23 +25,29 @@ export function BlogCard({ post, index = 0, session = null }) {
   return (
     <article
       aria-label={post.title}
-      className={`flex min-w-0 flex-col rounded-2xl border border-t-4 bg-white p-6 shadow-sm ${accents[index % 4]}`}
+      className={`flex min-w-0 flex-col rounded-2xl border border-t-4 bg-white dark:bg-slate-900 p-6 shadow-sm ${accents[index % 4]}`}
     >
-      <Link to={`/blog/${encodeURIComponent(post.id)}`} className={`rounded-lg ${focusRing}`}>
-        <h2 className="break-words font-serif text-2xl font-bold text-slate-900">
+      <Link
+        to={`/blog/${encodeURIComponent(post.id)}`}
+        className={`rounded-lg ${focusRing}`}
+      >
+        <h2 className="break-words font-serif text-2xl font-bold text-slate-900 dark:text-slate-100">
           {post.title}
         </h2>
-        <p className="mt-4 break-words text-base leading-7 text-slate-600">
+        <p className="mt-4 break-words text-base leading-7 text-slate-600 dark:text-slate-300">
           {post.content.slice(0, 120)}
         </p>
       </Link>
       <div className="mt-auto flex items-center gap-3 pt-6">
         <Avatar role={getAuthorRole(post)} />
         <div className="min-w-0 text-sm">
-          <p className="break-words font-semibold text-slate-800">
+          <p className="break-words font-semibold text-slate-800 dark:text-slate-200">
             {post.authorName}
           </p>
-          <time dateTime={post.createdAt} className="text-slate-500">
+          <time
+            dateTime={post.createdAt}
+            className="text-slate-500 dark:text-slate-400"
+          >
             {formatPostDate(post.createdAt)}
           </time>
         </div>

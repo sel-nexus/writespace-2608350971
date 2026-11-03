@@ -37,7 +37,8 @@ export default function AdminPage({ session = null }) {
   function remove(post) {
     setError("");
     setStatus("");
-    if (!window.confirm('Delete "' + post.title + '"? This cannot be undone.')) return;
+    if (!window.confirm('Delete "' + post.title + '"? This cannot be undone.'))
+      return;
     try {
       deleteRecentPost(post.id, session);
       setStatus("Post deleted.");
@@ -47,27 +48,37 @@ export default function AdminPage({ session = null }) {
     }
   }
   return (
-    <main id="main-content" className="mx-auto max-w-6xl space-y-8 px-4 py-10 sm:px-6">
-      <header className="rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 p-6 text-white sm:p-8">
+    <main
+      id="main-content"
+      className="mx-auto max-w-6xl space-y-8 px-4 py-10 sm:px-6"
+    >
+      <header
+        className="rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 dark:from-violet-800 dark:to-indigo-800 p-6 text-white dark:text-white sm:p-8"
+      >
         <p className="text-sm font-semibold uppercase tracking-widest">
           Local publication overview
         </p>
         <h1 className="mt-3 font-serif text-4xl font-bold">Admin Dashboard</h1>
         <p className="mt-3 max-w-2xl">
-          A little oversight for your writing space. Manage posts and accounts in this browser only.
+          A little oversight for your writing space. Manage posts and accounts
+          in this browser only.
         </p>
       </header>
       {error && (
-        <div className="space-y-3 rounded-lg bg-red-50 p-4">
-          <p role="alert" className="text-red-700">
+        <div className="space-y-3 rounded-lg bg-red-50 dark:bg-red-950 p-4">
+          <p role="alert" className="text-red-700 dark:text-red-300">
             {error}
           </p>
-          <button type="button" onClick={refresh} className={buttonVariants.secondary}>
+          <button
+            type="button"
+            onClick={refresh}
+            className={buttonVariants.secondary}
+          >
             Retry overview
           </button>
         </div>
       )}
-      <p role="status" className="text-sm text-slate-700">
+      <p role="status" className="text-sm text-slate-700 dark:text-slate-200">
         {status}
       </p>
       {dashboard && (
@@ -75,10 +86,26 @@ export default function AdminPage({ session = null }) {
           aria-label="Publication statistics"
           className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
         >
-          <StatCard label="Total Posts" value={dashboard.totalPosts} accent="indigo" />
-          <StatCard label="Total Users" value={dashboard.totalUsers} accent="slate" />
-          <StatCard label="Total Admins" value={dashboard.totalAdmins} accent="violet" />
-          <StatCard label="Total contributors" value={dashboard.totalContributors} accent="teal" />
+          <StatCard
+            label="Total Posts"
+            value={dashboard.totalPosts}
+            accent="indigo"
+          />
+          <StatCard
+            label="Total Users"
+            value={dashboard.totalUsers}
+            accent="slate"
+          />
+          <StatCard
+            label="Total Admins"
+            value={dashboard.totalAdmins}
+            accent="violet"
+          />
+          <StatCard
+            label="Total contributors"
+            value={dashboard.totalContributors}
+            accent="teal"
+          />
         </section>
       )}
       <nav aria-label="Quick actions" className="flex flex-wrap gap-3">
@@ -92,10 +119,13 @@ export default function AdminPage({ session = null }) {
       {dashboard && (
         <section
           aria-labelledby="recent-heading"
-          className="rounded-2xl border border-slate-200 bg-white p-6"
+          className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6"
         >
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 id="recent-heading" className="font-serif text-2xl font-bold">
+            <h2
+              id="recent-heading"
+              className="text-slate-800 dark:text-slate-200 font-serif text-2xl font-bold"
+            >
               Recent posts
             </h2>
             <Link to="/blogs" className={buttonVariants.ghost}>
@@ -103,11 +133,12 @@ export default function AdminPage({ session = null }) {
             </Link>
           </div>
           {dashboard.recentPosts.length === 0 ? (
-            <p className="py-8 text-slate-600">
-              No posts yet. Write your first post to start this local publication.
+            <p className="py-8 text-slate-600 dark:text-slate-300">
+              No posts yet. Write your first post to start this local
+              publication.
             </p>
           ) : (
-            <ul className="mt-4 divide-y divide-slate-200">
+            <ul className="mt-4 divide-y divide-slate-200 dark:divide-slate-700">
               {dashboard.recentPosts.map((post) => (
                 <li
                   key={post.id}
@@ -115,13 +146,18 @@ export default function AdminPage({ session = null }) {
                 >
                   <div className="min-w-0">
                     <h3 className="break-words text-lg font-semibold">
-                      <Link to={"/blog/" + post.id} className={buttonVariants.ghost}>
+                      <Link
+                        to={"/blog/" + post.id}
+                        className={buttonVariants.ghost}
+                      >
                         {post.title}
                       </Link>
                     </h3>
-                    <p className="mt-1 text-sm text-slate-600">
+                    <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
                       {post.authorName} ·{" "}
-                      <time dateTime={post.createdAt}>{formatPostDate(post.createdAt)}</time>
+                      <time dateTime={post.createdAt}>
+                        {formatPostDate(post.createdAt)}
+                      </time>
                     </p>
                   </div>
                   <div className="flex shrink-0 gap-2">
@@ -138,7 +174,7 @@ export default function AdminPage({ session = null }) {
                       onClick={() => remove(post)}
                       className={
                         buttonBase +
-                        " border border-red-200 bg-red-50 text-red-700 hover:bg-red-100"
+                        " border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900"
                       }
                     >
                       Delete
@@ -150,9 +186,9 @@ export default function AdminPage({ session = null }) {
           )}
         </section>
       )}
-      <p className="text-sm text-slate-600">
-        Client-side roles are demo behavior, not secure authorization. Data is not shared across
-        browsers.
+      <p className="text-sm text-slate-600 dark:text-slate-300">
+        Client-side roles are demo behavior, not secure authorization. Data is
+        not shared across browsers.
       </p>
     </main>
   );
