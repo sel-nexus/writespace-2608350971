@@ -1,6 +1,60 @@
 {
   "nodes": [
     {
+      "id": "changelog",
+      "label": "CHANGELOG.md",
+      "file_type": "document",
+      "node_kind": "page",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "changelog_writespace_change_run_changelog",
+      "label": "WriteSpace change-run changelog",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "changelog_added",
+      "label": "Added",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L3",
+      "_origin": "ast"
+    },
+    {
+      "id": "changelog_modified",
+      "label": "Modified",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L8",
+      "_origin": "ast"
+    },
+    {
+      "id": "changelog_preservation_and_migration",
+      "label": "Preservation and migration",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L17",
+      "_origin": "ast"
+    },
+    {
+      "id": "changelog_verification_and_limitations",
+      "label": "Verification and limitations",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L20",
+      "_origin": "ast"
+    },
+    {
       "id": "frontend_e2e_admin_spec",
       "label": "admin.spec.js",
       "file_type": "code",
@@ -785,6 +839,39 @@
       "community": 11
     },
     {
+      "id": "frontend_preflight",
+      "label": "preflight.js",
+      "file_type": "code",
+      "source_file": "frontend/preflight.js",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "frontend_preflight_settings",
+      "label": "settings",
+      "file_type": "code",
+      "source_file": "frontend/preflight.js",
+      "source_location": "L4",
+      "_origin": "ast"
+    },
+    {
+      "id": "frontend_preflight_output",
+      "label": "output",
+      "file_type": "code",
+      "source_file": "frontend/preflight.js",
+      "source_location": "L7",
+      "_origin": "ast"
+    },
+    {
+      "id": "frontend_preflight_capture",
+      "label": "capture()",
+      "file_type": "code",
+      "source_file": "frontend/preflight.js",
+      "source_location": "L19",
+      "_callable": true,
+      "_origin": "ast"
+    },
+    {
       "id": "frontend_scripts_preflight",
       "label": "preflight.js",
       "file_type": "code",
@@ -1492,7 +1579,7 @@
       "label": "features",
       "file_type": "code",
       "source_file": "frontend/src/features/discovery/LandingPage.jsx",
-      "source_location": "L67",
+      "source_location": "L74",
       "_origin": "ast",
       "community": 1
     },
@@ -1501,7 +1588,7 @@
       "label": "LandingPage()",
       "file_type": "code",
       "source_file": "frontend/src/features/discovery/LandingPage.jsx",
-      "source_location": "L79",
+      "source_location": "L86",
       "_callable": true,
       "_origin": "ast",
       "community": 1
@@ -2125,7 +2212,7 @@
       "label": "Avatar()",
       "file_type": "code",
       "source_file": "frontend/src/shared/Avatar.jsx",
-      "source_location": "L30",
+      "source_location": "L32",
       "_callable": true,
       "_origin": "ast",
       "community": 2
@@ -2444,6 +2531,56 @@
     }
   ],
   "links": [
+    {
+      "source": "changelog",
+      "target": "changelog_writespace_change_run_changelog",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "changelog_writespace_change_run_changelog",
+      "target": "changelog_added",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "changelog_writespace_change_run_changelog",
+      "target": "changelog_modified",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "changelog_writespace_change_run_changelog",
+      "target": "changelog_preservation_and_migration",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L17",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "changelog_writespace_change_run_changelog",
+      "target": "changelog_verification_and_limitations",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L20",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
     {
       "source": "frontend_e2e_admin_spec",
       "target": "frontend_e2e_fixtures",
@@ -3624,6 +3761,47 @@
       "confidence": "EXTRACTED",
       "source_file": "frontend/playwright.config.js",
       "source_location": "L15",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "frontend_preflight",
+      "target": "ref_playwright_test",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/preflight.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "frontend_preflight",
+      "target": "frontend_preflight_settings",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/preflight.js",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "frontend_preflight",
+      "target": "frontend_preflight_output",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/preflight.js",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "frontend_preflight",
+      "target": "frontend_preflight_capture",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/preflight.js",
+      "source_location": "L19",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -6572,7 +6750,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/features/discovery/LandingPage.jsx",
-      "source_location": "L67",
+      "source_location": "L74",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -6582,7 +6760,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/features/discovery/LandingPage.jsx",
-      "source_location": "L79",
+      "source_location": "L86",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -6593,7 +6771,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/features/discovery/LandingPage.jsx",
-      "source_location": "L122",
+      "source_location": "L132",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -6810,7 +6988,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/features/discovery/LandingPage.test.jsx",
-      "source_location": "L192",
+      "source_location": "L199",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -9045,7 +9223,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/shared/Avatar.jsx",
-      "source_location": "L30",
+      "source_location": "L32",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -9056,7 +9234,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/shared/Avatar.jsx",
-      "source_location": "L31",
+      "source_location": "L33",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -10698,7 +10876,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/features/discovery/LandingPage.jsx",
-      "source_location": "L80",
+      "source_location": "L87",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -11734,10 +11912,10 @@
     }
   ],
   "metadata": {
-    "built_at": "2026-11-03T14:38:36.821790+00:00",
+    "built_at": "2026-11-03T15:16:24.822515+00:00",
     "version": "graph_update-v1",
     "codebase_root": "C:\\artifacts-v2\\T0132PcJVCRTV000403112614052964\\developer",
     "force": true,
-    "files_scanned": 60
+    "files_scanned": 62
   }
 }
