@@ -23,6 +23,8 @@ import {
  *   session: Complete identity revalidated by each mutation.
  * Returns:
  *   Plain-text form, missing-post feedback, or ownership-denial redirect.
+ * Notes:
+ *   Count the exact controlled textarea value in UTF-16 code units without a limit.
  */
 export default function PostFormPage({ session = null }) {
   const { id } = useParams();
@@ -76,7 +78,7 @@ export default function PostFormPage({ session = null }) {
     >
       {editing && !post ? (
         <>
-          <h1 className="font-serif text-4xl font-bold text-slate-900">
+          <h1 className="font-serif text-4xl font-bold text-slate-900 dark:text-slate-100">
             Post not found
           </h1>
           <Link to="/blogs" className={buttonVariants.ghost}>
@@ -85,16 +87,16 @@ export default function PostFormPage({ session = null }) {
         </>
       ) : (
         <>
-          <h1 className="font-serif text-4xl font-bold text-slate-900">
+          <h1 className="font-serif text-4xl font-bold text-slate-900 dark:text-slate-100">
             {editing ? "Edit Post" : "Write a Post"}
           </h1>
-          <p className="mt-3 text-slate-600">
+          <p className="mt-3 text-slate-600 dark:text-slate-300">
             Your words are saved as plain text in this browser.
           </p>
           <form
             noValidate
             onSubmit={save}
-            className="mt-8 space-y-6 rounded-2xl border border-slate-200 bg-white p-6 sm:p-10"
+            className="mt-8 space-y-6 rounded-2xl border border-slate-200 bg-white p-6 sm:p-10 dark:border-slate-700 dark:bg-slate-800"
           >
             <FormField
               id="post-title"
@@ -117,7 +119,7 @@ export default function PostFormPage({ session = null }) {
             {error && (
               <p
                 role="alert"
-                className="rounded-lg bg-red-50 p-3 text-sm text-red-600"
+                className="rounded-lg bg-red-50 p-3 text-sm text-red-600 dark:bg-red-950 dark:text-red-300"
               >
                 {error}
               </p>

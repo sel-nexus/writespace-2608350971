@@ -53,6 +53,95 @@ function mount(path = "/write", identity = owner) {
 }
 
 describe("PostFormPage", () => {
+  it("tracks each typed update, clearing and native paste with exact UTF-16 length", async () => {
+    const user = userEvent.setup();
+    mount();
+    const content = screen.getByLabelText("Content");
+    const counter = screen.getByText("0 characters");
+    expect(content).not.toHaveAttribute("maxlength");
+    expect(content).toHaveAttribute("aria-describedby", counter.id);
+    expect(content).toHaveAccessibleDescription("0 characters");
+    await user.type(content, "A");
+    expect(counter).toHaveTextContent(/^1 characters$/);
+    await user.type(content, "B");
+    expect(counter).toHaveTextContent(/^2 characters$/);
+    await user.clear(content);
+    expect(counter).toHaveTextContent(/^0 characters$/);
+    const pasted = "  Words 😀\n\nTrailing space  ";
+    await user.paste(pasted);
+    expect(content).toHaveValue(pasted);
+    expect(counter.textContent).toBe(pasted.length + " characters");
+    expect(content).toHaveAccessibleDescription(pasted.length + " characters");
+    await user.clear(content);
+    expect(content).toHaveValue("");
+    expect(counter).toHaveTextContent(/^0 characters$/);
+  });
+  it("saves large pasted content exactly and restores and updates its edit count", async () => {
+    const user = userEvent.setup();
+    mount();
+    const large = "  <b>Literal 😀</b>\n\n".repeat(3000) + "  End  ";
+    await user.type(screen.getByLabelText("Title"), "Long writing");
+    await user.click(screen.getByLabelText("Content"));
+    await user.paste(large);
+    expect(screen.getByLabelText("Content")).not.toHaveAttribute("maxlength");
+    expect(screen.getByLabelText("Content")).toHaveValue(large);
+    expect(screen.getByText(large.length + " characters")).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    const saved = getPosts().find((item) => item.id !== post.id);
+    expect(saved.content).toBe(large);
+    expect(
+      JSON.parse(localStorage.getItem("writespace_posts")).find(
+        (item) => item.id === saved.id,
+      ),
+    ).toEqual(saved);
+    await user.click(screen.getByRole("link", { name: "Edit", exact: true }));
+    const content = screen.getByLabelText("Content");
+    expect(content).toHaveValue(large);
+    expect(screen.getByText(large.length + " characters")).toBeVisible();
+    await user.clear(content);
+    expect(screen.getByText("0 characters")).toBeVisible();
+    const revised = large + "\n  Revision 😀  ";
+    await user.paste(revised);
+    expect(screen.getByText(revised.length + " characters")).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    expect(getPost(saved.id)).toEqual({ ...saved, content: revised });
+    expect(
+      JSON.parse(localStorage.getItem("writespace_posts")).find(
+        (item) => item.id === saved.id,
+      ).content,
+    ).toBe(revised);
+  });
+  it.each(["/write", "/edit/p1"])(
+    "uses paired editor and counter theme utilities on %s",
+    (path) => {
+      localStorage.setItem("writespace_theme", "dark");
+      mount(path);
+      expect(document.documentElement).toHaveClass("dark");
+      const heading = screen.getByRole("heading", {
+        name: path === "/write" ? "Write a Post" : "Edit Post",
+      });
+      expect(heading).toHaveClass("text-slate-900", "dark:text-slate-100");
+      expect(
+        screen.getByText("Your words are saved as plain text in this browser."),
+      ).toHaveClass("text-slate-600", "dark:text-slate-300");
+      const content = screen.getByLabelText("Content");
+      expect(content.closest("form")).toHaveClass(
+        "bg-white",
+        "dark:bg-slate-800",
+        "border-slate-200",
+        "dark:border-slate-700",
+      );
+      expect(content).toHaveClass(
+        "bg-white",
+        "dark:bg-slate-900",
+        "text-slate-800",
+        "dark:text-slate-200",
+      );
+      const counter = screen.getByText(content.value.length + " characters");
+      expect(counter).toHaveClass("text-slate-600", "dark:text-slate-300");
+      expect(content).toHaveAttribute("aria-describedby", counter.id);
+    },
+  );
   it.each([owner, BUILTIN_ADMIN])(
     "creates literal writing, counts characters and redirects to saved reader",
     async (identity) => {
@@ -101,7 +190,11 @@ describe("PostFormPage", () => {
       await user.clear(screen.getByLabelText("Title"));
       await user.type(screen.getByLabelText("Title"), "Revised");
       await user.clear(screen.getByLabelText("Content"));
+      expect(screen.getByText("0 characters")).toBeVisible();
       await user.type(screen.getByLabelText("Content"), "Updated\nwords");
+      expect(
+        screen.getByText("Updated\nwords".length + " characters"),
+      ).toBeVisible();
       await user.click(screen.getByRole("button", { name: "Save" }));
       expect(screen.getByRole("heading", { name: "Revised" })).toBeVisible();
       expect(getPost("p1")).toEqual({
@@ -144,6 +237,7 @@ describe("PostFormPage", () => {
           path +
           " and allows correction",
         async () => {
+          localStorage.setItem("writespace_theme", "dark");
           mount(path);
           const user = userEvent.setup();
           const other = field === "Title" ? "Content" : "Title";
@@ -168,6 +262,19 @@ describe("PostFormPage", () => {
             "aria-invalid",
             "false",
           );
+          const alert = screen.getByRole("alert");
+          expect(alert).toHaveClass("text-red-600", "dark:text-red-300");
+          expect(screen.getByLabelText(field)).toHaveClass(
+            "border-red-600",
+            "dark:border-red-400",
+          );
+          expect(
+            screen
+              .getByLabelText(field)
+              .getAttribute("aria-describedby")
+              .split(" "),
+          ).toContain(alert.id);
+          expect(screen.getByLabelText(field)).toHaveValue("   ");
           expect(getPosts()).toEqual([post]);
           await user.type(screen.getByLabelText(field), "Corrected");
           await user.click(screen.getByRole("button", { name: "Save" }));
@@ -192,6 +299,12 @@ describe("PostFormPage", () => {
         });
         await user.click(screen.getByRole("button", { name: "Save" }));
         expect(screen.getByRole("alert")).toHaveTextContent("Could not save");
+        expect(screen.getByRole("alert")).toHaveClass(
+          "bg-red-50",
+          "dark:bg-red-950",
+          "text-red-600",
+          "dark:text-red-300",
+        );
         expect(screen.getByLabelText("Title")).toHaveValue(title);
         expect(getPosts()).toEqual([post]);
       },
@@ -248,6 +361,9 @@ describe("PostFormPage", () => {
       expect(
         screen.getByRole("heading", { name: "Post not found" }),
       ).toBeVisible();
+      expect(
+        screen.getByRole("heading", { name: "Post not found" }),
+      ).toHaveClass("text-slate-900", "dark:text-slate-100");
       expect(screen.queryByLabelText("Title")).not.toBeInTheDocument();
       await userEvent
         .setup()

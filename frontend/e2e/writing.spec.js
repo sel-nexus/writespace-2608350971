@@ -173,6 +173,100 @@ test("navbar Write and create Cancel do not publish a draft", async ({
   ).toEqual([]);
 });
 
+for (const viewport of [
+  { width: 1280, height: 800 },
+  { width: 390, height: 844 },
+]) {
+  test(
+    "dark editor counts exact unlimited content through create and edit at width " +
+      viewport.width,
+    async ({ page }) => {
+      await page.setViewportSize(viewport);
+      await page.goto("/");
+      await page.getByRole("button", { name: "Switch to dark mode" }).click();
+      await registerWriter(page);
+      await navigate(page, "Write");
+      await expect(page.locator("html")).toHaveClass(/(?:^|\s)dark(?:\s|$)/);
+      const content = page.getByLabel("Content");
+      const counter = page.locator("#post-content-hint");
+      await expect(counter).toHaveText("0 characters");
+      await expect(content).toHaveAttribute(
+        "aria-describedby",
+        "post-content-hint",
+      );
+      expect(await content.getAttribute("maxlength")).toBeNull();
+      await expect(page.locator("main form")).toHaveCSS(
+        "background-color",
+        "rgb(30, 41, 59)",
+      );
+      await expect(content).toHaveCSS("background-color", "rgb(15, 23, 42)");
+      await expect(counter).toHaveCSS("color", "rgb(203, 213, 225)");
+      await page.getByLabel("Title").fill("Live unlimited writing");
+      await content.fill("   ");
+      await expect(counter).toHaveText("3 characters");
+      await page.getByRole("button", { name: "Save", exact: true }).click();
+      await expect(page.locator("#post-content-error")).toHaveText(
+        "Content is required.",
+      );
+      await expect(content).toHaveAttribute(
+        "aria-describedby",
+        "post-content-hint post-content-error",
+      );
+      await expect(page.locator("#post-content-error")).toHaveCSS(
+        "color",
+        "rgb(252, 165, 165)",
+      );
+      await content.fill("A");
+      await expect(counter).toHaveText("1 characters");
+      await content.pressSequentially("B");
+      await expect(counter).toHaveText("2 characters");
+      await content.fill("");
+      await expect(counter).toHaveText("0 characters");
+      const large = "  Literal 😀 <b>words</b>\n\n".repeat(3000) + "  End  ";
+      await content.fill(large);
+      await expect(content).toHaveValue(large);
+      await expect(counter).toHaveText(large.length + " characters");
+      await page.getByRole("button", { name: "Save", exact: true }).click();
+      await expect(
+        page.getByRole("heading", { name: "Live unlimited writing" }),
+      ).toBeVisible();
+      const saved = await page.evaluate(
+        () => JSON.parse(localStorage.getItem("writespace_posts"))[0],
+      );
+      expect(saved.content).toBe(large);
+      expect(
+        await page.locator("article .whitespace-pre-wrap").textContent(),
+      ).toBe(large);
+      await page.getByRole("link", { name: "Edit", exact: true }).click();
+      await expect(content).toHaveValue(large);
+      await expect(counter).toHaveText(large.length + " characters");
+      await expect(page.locator("html")).toHaveClass(/(?:^|\s)dark(?:\s|$)/);
+      await content.fill("");
+      await expect(counter).toHaveText("0 characters");
+      const revised = "  Edited 😀\n\n" + large;
+      await content.fill(revised);
+      await expect(counter).toHaveText(revised.length + " characters");
+      await content.pressSequentially("!");
+      await expect(counter).toHaveText(revised.length + 1 + " characters");
+      await page.getByRole("button", { name: "Save", exact: true }).click();
+      await expect(
+        page.getByRole("heading", { name: saved.title }),
+      ).toBeVisible();
+      expect(
+        await page.evaluate(
+          () => JSON.parse(localStorage.getItem("writespace_posts"))[0],
+        ),
+      ).toEqual({ ...saved, content: revised + "!" });
+      expect(
+        await page.locator("article .whitespace-pre-wrap").textContent(),
+      ).toBe(revised + "!");
+      await page.getByRole("link", { name: "Edit", exact: true }).click();
+      await expect(content).toHaveValue(revised + "!");
+      await expect(counter).toHaveText(revised.length + 1 + " characters");
+    },
+  );
+}
+
 const identity = {
   userId: "reader",
   username: "reader",
